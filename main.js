@@ -1,6 +1,11 @@
 "use strict";
 
-(async function() { 
-    const price = require("./self_modules/cryptoPrice")
-    console.log( await price);
+(async function main() { 
+    const price = await require("./self_modules/cryptoPrice")
+    // const exchanges = require("./self_modules/exchanges")
+    const changePrice = require("./self_modules/changePriceInDataBase")
+
+    changePrice.validateData(price)
+    
+    // main()
 }) ();
