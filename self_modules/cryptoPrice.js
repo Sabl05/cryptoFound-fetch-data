@@ -27,7 +27,7 @@ async function getPrice(ccxt, b) {
             // price[j].push(temp['percentage'])
             temp.pair = symbols[j]
             price.push(temp)
-            // console.log(price)   
+            console.log(price)   
         } catch (error) {
             console.log('Error is: ' + error)
         }

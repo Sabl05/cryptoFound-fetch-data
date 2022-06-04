@@ -1,7 +1,7 @@
 const ccxt = require('ccxt')
-const exchanges = getAllechanges(ccxt)
+const exchanges = getAllexchange(ccxt)
 module.exports = exchanges
 
-function getAllechanges(ccxt) {
+function getAllexchange(ccxt) {
     return ccxt.exchanges
 }
