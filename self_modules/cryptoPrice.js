@@ -1,40 +1,52 @@
 
 const ccxt = require('ccxt')
-let b = new ccxt.binance()
+const changePrice = require("./changePriceInDataBase")
+// let b = new ccxt.binance()
 
-const price = getPrice(ccxt, b)
+// const price = getPrice(ccxt, b)
 
-module.exports = price
 
-async function getPrice(ccxt, b) {
-    // let exchange = getAllechanges(ccxt)
-    let exchange = new ccxt['binance']({ enableRateLimit: true })
-    await exchange.loadMarkets()
-    let symbols = await getSymbols(b)
-    let price = []
-    let base = ['/USDT', '/BUSD', '/USDC', '/DAI', '/TUSD']
-    
-    // if (exchange.has['fetchTicker']) {
-    //     console.log (await (exchange.fetchTicker ('BTC/USDT')))
+// exchanges.forEach(element => {
+    // if(element !== 'bitbns' || element != "aax"|| element !== 'latoken'|| element !== 'bitrue'|| element !== 'lbank') {
+    //     console.log(element);
+    //     price.push(ticker.getPrice(element))
     // }
+    // console.log(element);
+//     price.push(getPrice(element));
+// });
 
-    for (let j = 0; j < symbols.length; j++) {
-        try {   
-            let temp = await (exchange.fetchTicker(symbols[j]+'/BUSD'))
-            // price[j].push(symbols[j])
-            // price[j].push(temp['last'])
-            // price[j].push(temp['symbol'])
-            // price[j].push(temp['percentage'])
-            temp.pair = symbols[j]
-            price.push(temp)
-            console.log(price)   
-        } catch (error) {
-            console.log('Error is: ' + error)
-        }
+async function getPrice(exchanges) {
+    let price = []
+    await Promise.all(exchanges.map(async (element) => {
+        // let exchange = getAllechanges(ccxt)
+        let exchange = new ccxt[element]({ enablefetchTicker: true, enableRateLimit: true})
+        await exchange.loadMarkets()
+        let symbols = await getSymbols(element)
+        // let base = ['/USDT', '/BUSD', '/USDC', '/DAI', '/TUSD']
         
-    }
-    // console.log(price);
+        // if (exchange.has['fetchTicker']) {
+        //     console.log (await (exchange.fetchTicker ('BTC/USDT')))
+        // }
 
+        for await(let j of symbols) {
+            try {   
+                let temp = await (exchange.fetchTicker(j+'/USDT'))
+                // price[j].push(symbols[j])
+                // price[j].push(temp['last'])
+                // price[j].push(temp['symbol'])
+                // price[j].push(temp['percentage'])
+                temp.pair = j
+                temp.exchange = element
+                price.push(temp)
+                console.log(price);
+            } catch (error) {
+                // console.log('Error is: ' + error)
+            }
+        }
+        // console.log(element); 
+    }));
+
+    changePrice.validateData(price)
     return price
 }
 
@@ -43,8 +55,12 @@ function getAllechanges(ccxt) {
     return ccxt.exchanges
 }
 
-async function getSymbols(b) {
+async function getSymbols(element) {
+    const exchangeClass = ccxt[element]
+    , b = new exchangeClass()
     await b.loadMarkets()
     let symbols =  b.codes 
     return symbols
 } 
+
+exports.getPrice = getPrice
