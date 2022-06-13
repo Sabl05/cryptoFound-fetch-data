@@ -2,7 +2,7 @@ let db = require('./db')
 
 function validateData(data) {
   // var exchange = "binance"
-  var query = "DELETE FROM crypto_currency;"
+  var query = "DELETE FROM crypto_currencies;"
   // var query = ""
   for (let element of data) {
     element['pair']         = validateUndefinedValue(element['pair'])
@@ -12,7 +12,7 @@ function validateData(data) {
     element['quoteVolume']  = validateUndefinedValueFloat(element['quoteVolume'])
     element['exchange']     = validateUndefinedValue(element['exchange'])
 
-    query += "INSERT INTO crypto_currency(symbol, pair, price, price_24h, vol, exchange)" +
+    query += "INSERT INTO crypto_currencies(symbol, pair, price, price_24h, vol, exchange)" +
     "VALUES('"+ element['pair'] +"', '"+ element['symbol'] +"', "+ element['last'] +", '"+ element['percentage'] +"', "+ element['quoteVolume'] +", '"+ element['exchange'] +"');"
   }
 
